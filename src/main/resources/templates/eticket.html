@@ -1,0 +1,169 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>E-Ticket</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    .ticket {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 40px auto;
+      background-color: #fff;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 80%;
+      max-width: 700px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+
+    h3 {
+      color: #2c3e50;
+      margin-top: 20px;
+      font-size: 22px;
+    }
+
+    .details {
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+
+    .details strong {
+      font-weight: bold;
+      color: #34495e;
+    }
+
+    .passengers-list {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .passenger-item {
+      background-color: #ecf0f1;
+      padding: 10px;
+      margin-bottom: 8px;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    .passenger-item span {
+      display: block;
+    }
+
+    .ticket-footer {
+      margin-top: 30px;
+      font-size: 16px;
+      text-align: center;
+      color: #7f8c8d;
+    }
+
+    .ticket-footer a {
+      color: #3498db;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .ticket-footer a:hover {
+      text-decoration: underline;
+    }
+
+    .alert {
+      background-color: #f39c12;
+      color: white;
+      padding: 10px;
+      text-align: center;
+      margin-bottom: 20px;
+      border-radius: 5px;
+    }
+
+    @media (max-width: 768px) {
+      .ticket {
+        width: 90%;
+        padding: 15px;
+      }
+
+      h2 {
+        font-size: 24px;
+      }
+
+      h3 {
+        font-size: 20px;
+      }
+
+      .details, .passenger-item {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="ticket">
+  <h2>E-Ticket</h2>
+
+  <div th:if="${errorMessage}" class="alert" th:text="${errorMessage}"></div>
+
+  <div class="details">
+    <strong>Booking ID:</strong> <span th:text="${booking.id}"></span>
+  </div>
+
+  <div class="details">
+    <strong>User:</strong> <span th:text="${booking.user.username}"></span> (<span th:text="${booking.user.email}"></span>)
+  </div>
+
+  <h3>Bus Details</h3>
+  <div class="details">
+    <strong>Bus Name:</strong> <span th:text="${bus.name}"></span>
+  </div>
+
+  <div class="details">
+    <strong>Source:</strong> <span th:text="${bus.source}"></span>
+  </div>
+
+  <div class="details">
+    <strong>Destination:</strong> <span th:text="${bus.destination}"></span>
+  </div>
+
+  <div class="details">
+    <strong>Journey Date:</strong> <span th:text="${#temporals.format(booking.journeyDate, 'yyyy-MM-dd')}"></span>
+  </div>
+
+  <div class="details">
+    <strong>Seat Number(s):</strong> <span th:text="${booking.seatNumber}"></span>
+  </div>
+
+  <h3>Passenger(s)</h3>
+  <ul class="passengers-list">
+    <li class="passenger-item" th:each="passenger : ${passengers}">
+      <span th:text="${passenger.name}"></span>
+      <span th:if="${passenger.age}"> (Age: <span th:text="${passenger.age}"></span>)</span>
+      <span th:if="${passenger.gender}">, Gender: <span th:text="${passenger.gender}"></span></span>
+      <span th:if="${passenger.mobileNumber}">, MobileNumber: <span th:text="${passenger.mobileNumber}"></span></span>
+    </li>
+  </ul>
+
+  <div class="details">
+    <strong>Booking Status:</strong> <span th:text="${booking.status}"></span>
+  </div>
+
+  <p class="ticket-footer">Thank you for booking with us! <br>
+    <a href="/home">Go back to homepage</a>
+  </p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,307 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Book a Bus Seat</title>
+    <style>
+        :root {
+            --primary-color: #2c7be5;
+            --secondary-color: #f8f9fa;
+            --accent-color: #28a745;
+            --text-dark: #343a40;
+            --text-muted: #6c757d;
+            --seat-size: 44px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 30px;
+            background-color: var(--secondary-color);
+            color: var(--text-dark);
+        }
+
+        .section {
+            background: #fff;
+            padding: 25px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .section:hover {
+            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+        }
+
+        h2, h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        input[type="date"] {
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        #seat-map {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .bus-row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .seat {
+            width: var(--seat-size);
+            height: var(--seat-size);
+            margin: 6px;
+            text-align: center;
+            line-height: var(--seat-size);
+            background-color: #dee2e6;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s ease-in-out;
+            position: relative;
+        }
+
+        .seat:hover:not(.disabled):not(.selected) {
+            background-color: #ced4da;
+            transform: scale(1.05);
+        }
+
+        .seat.window::before {
+            content: "🪟";
+            font-size: 11px;
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .seat.disabled {
+            background-color: #adb5bd;
+            cursor: not-allowed;
+            color: #6c757d;
+        }
+
+        .seat.selected {
+            background-color: var(--accent-color);
+            color: #fff;
+            box-shadow: 0 0 0 2px #218838;
+        }
+
+        .aisle {
+            width: var(--seat-size);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .legend-box {
+            width: 22px;
+            height: 22px;
+            margin-right: 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .summary, #selectedInfo {
+            margin-top: 15px;
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--accent-color);
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover:not(:disabled) {
+            background-color: #1a5fd5;
+        }
+
+        button:disabled {
+            background-color: #adb5bd;
+            cursor: not-allowed;
+        }
+
+        .legend-box.window {
+            position: relative;
+        }
+
+        .legend-box.window::before {
+            content: "🪟";
+            position: absolute;
+            top: -18px;
+            left: 2px;
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="section">
+    <h2>Book Bus Seats</h2>
+    <p><strong>Bus:</strong> <span th:text="${bus.name}"></span></p>
+    <p><strong>From:</strong> <span th:text="${bus.source}"></span></p>
+    <p><strong>To:</strong> <span th:text="${bus.destination}"></span></p>
+</div>
+
+<div class="section">
+    <form th:action="@{/bus/book-seats}" method="post">
+        <input type="hidden" name="busId" th:value="${bus.id}" />
+        <input type="hidden" name="selectedSeats" id="selectedSeats" value="" />
+
+        <label for="journeyDate">Select Date:</label>
+        <input type="date" name="journeyDate" id="journeyDate" required th:value="${journeyDate}"/>
+        <br><br>
+
+        <div id="seat-map"></div>
+
+        <div id="selectedInfo"></div>
+
+        <br>
+        <button type="submit" id="bookBtn" disabled>Book Selected Seats</button>
+    </form>
+</div>
+
+<div class="section">
+    <h3>Legend</h3>
+    <div style="display: flex; gap: 20px;">
+        <div class="legend-item"><div class="legend-box" style="background: #dee2e6;"></div>Available</div>
+        <div class="legend-item"><div class="legend-box" style="background: #adb5bd;"></div>Booked</div>
+        <div class="legend-item"><div class="legend-box" style="background: #28a745;"></div>Selected</div>
+        <div class="legend-item"><div class="legend-box window" style="background: #dee2e6;"></div>Window</div>
+    </div>
+</div>
+
+<div class="section">
+    <h3>Seat Summary</h3>
+    <p>Available Seats: <span id="availableCount">0</span></p>
+    <p>Booked Seats: <span id="bookedCount">0</span></p>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+        const allSeats = [];
+        const rows = 10;
+        const seatLetters = ["1", "2", "3", "4"];
+        const bookedSeats = [[${bookedSeats}]];
+        const busId = [[${bus.id}]];
+
+        const seatMap = document.getElementById("seat-map");
+        const selectedSeatsInput = document.getElementById("selectedSeats");
+        const bookBtn = document.getElementById("bookBtn");
+        const selectedInfo = document.getElementById("selectedInfo");
+        let currentlySelectedSeats = [];
+
+        function createSeat(code, isBooked, isWindow) {
+            const div = document.createElement("div");
+            div.className = "seat";
+            if (isWindow) div.classList.add("window");
+            div.textContent = code;
+            if (isBooked) {
+                div.classList.add("disabled");
+            } else {
+                div.onclick = () => {
+                    if (currentlySelectedSeats.includes(code)) {
+                        currentlySelectedSeats = currentlySelectedSeats.filter(seat => seat !== code);
+                        div.classList.remove("selected");
+                    } else {
+                        currentlySelectedSeats.push(code);
+                        div.classList.add("selected");
+                    }
+                    selectedSeatsInput.value = currentlySelectedSeats.join(',');
+                    bookBtn.disabled = currentlySelectedSeats.length === 0;
+                    selectedInfo.innerText = `Selected Seats: ${currentlySelectedSeats.join(', ')}`;
+                };
+            }
+            return div;
+        }
+
+        function renderSeats(booked) {
+            seatMap.innerHTML = "";
+            let availableCount = 0;
+            let bookedCount = 0;
+
+            for (let i = 0; i < rows; i++) {
+                const rowLetter = String.fromCharCode(65 + i);
+                const rowDiv = document.createElement("div");
+                rowDiv.className = "bus-row";
+
+                // Left (A1, A2)
+                for (let j = 0; j < 2; j++) {
+                    const seatCode = rowLetter + seatLetters[j];
+                    const seat = createSeat(seatCode, booked.includes(seatCode), j === 0);
+                    if (booked.includes(seatCode)) {
+                        bookedCount++;
+                    } else {
+                        availableCount++;
+                    }
+                    rowDiv.appendChild(seat);
+                }
+
+                // Aisle
+                const aisleDiv = document.createElement("div");
+                aisleDiv.className = "aisle";
+                rowDiv.appendChild(aisleDiv);
+
+                // Right (A3, A4)
+                for (let j = 2; j < 4; j++) {
+                    const seatCode = rowLetter + seatLetters[j];
+                    const seat = createSeat(seatCode, booked.includes(seatCode), j === 3);
+                    if (booked.includes(seatCode)) {
+                        bookedCount++;
+                    } else {
+                        availableCount++;
+                    }
+                    rowDiv.appendChild(seat);
+                }
+
+                seatMap.appendChild(rowDiv);
+            }
+
+            document.getElementById("availableCount").innerText = availableCount;
+            document.getElementById("bookedCount").innerText = bookedCount;
+            selectedSeatsInput.value = "";
+            bookBtn.disabled = true;
+            selectedInfo.innerText = "";
+        }
+
+        renderSeats(bookedSeats);
+
+        document.getElementById("journeyDate").addEventListener("change", () => {
+            const date = document.getElementById("journeyDate").value;
+            fetch(`/bus/seats?busId=${busId}&journeyDate=${date}`)
+                .then(res => res.json())
+                .then(newBookedSeats => renderSeats(newBookedSeats));
+        });
+    /*]]>*/
+</script>
+
+</body>
+</html>

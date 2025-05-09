@@ -1,0 +1,137 @@
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Booking Options</title>
+    <style>
+        :root {
+            --primary: #2c7be5;
+            --secondary: #6c757d;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --background: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #212529;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            display: flex;
+            justify-content: center;
+            padding: 50px 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            background-color: var(--card-bg);
+            padding: 30px 40px;
+            border-radius: 16px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+            color: var(--text);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            margin-top: 30px;
+            color: var(--secondary);
+        }
+
+        p {
+            line-height: 1.6;
+        }
+
+        .note {
+            background-color: #fff3cd;
+            color: #856404;
+            border-left: 5px solid #ffeeba;
+            padding: 10px 15px;
+            margin-top: 10px;
+            border-radius: 8px;
+        }
+
+        form {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            margin: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #1a5fd5;
+        }
+
+        .btn-secondary {
+            background-color: var(--success);
+        }
+
+        .btn-secondary:hover {
+            background-color: #218838;
+        }
+
+        .booking-id {
+            margin-top: 20px;
+            font-weight: bold;
+            color: var(--text);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            button {
+                display: block;
+                width: 100%;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Choose Your Booking Option</h1>
+
+    <!-- Option 1 -->
+    <div>
+        <h2>Option 1: Online Payment</h2>
+        <p>We recommend this option for real-world apps. Payment will be processed securely via Razorpay.</p>
+        <div class="note">
+            <strong>Note:</strong> This option is not yet implemented. Stay tuned for future updates!
+        </div>
+    </div>
+
+    <!-- Option 2 -->
+    <div class="booking-id">
+        Booking ID: <span th:text="${bookingId}"></span>
+    </div>
+
+    <form th:action="@{/booking/confirm-booking(bookingId=${bookingId})}" method="POST">
+        <button type="submit">Confirm Booking with Payment on Arrival</button>
+    </form>
+
+    <form th:action="@{/booking/confirm-booking-hold(bookingId=${bookingId})}" method="POST">
+        <button type="submit" class="btn-secondary">Confirm with Google Pay</button>
+    </form>
+</div>
+</body>
+</html>

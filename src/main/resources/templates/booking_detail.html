@@ -1,0 +1,95 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Booking Details</title>
+  <style>
+    :root {
+      --primary: #2c7be5;
+      --text: #343a40;
+      --bg: #f8f9fa;
+      --card-bg: #ffffff;
+      --border: #dee2e6;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 60px 20px;
+    }
+
+    .container {
+      background-color: var(--card-bg);
+      padding: 30px 40px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+      color: var(--text);
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--primary);
+      margin-bottom: 30px;
+    }
+
+    p {
+      font-size: 18px;
+      margin: 15px 0;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+    }
+
+    p strong {
+      display: inline-block;
+      width: 140px;
+      color: #555;
+    }
+
+    a {
+      display: block;
+      text-align: center;
+      margin-top: 30px;
+      text-decoration: none;
+      background-color: var(--primary);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+
+    a:hover {
+      background-color: #1a5fd5;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+
+      p strong {
+        width: 120px;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Booking Details</h1>
+
+  <p><strong>Booking ID:</strong> <span th:text="${booking.id}"></span></p>
+  <p><strong>Journey Date:</strong> <span th:text="${booking.journeyDate}"></span></p>
+  <p><strong>User:</strong> <span th:text="${booking.user.username}"></span></p>
+
+  <!--<a th:href="@{/bookings}">Back to List</a>-->
+  <a href="/home">Go to Homepage</a>
+</div>
+</body>
+</html>

@@ -1,0 +1,121 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>My Bookings</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-top: 30px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .success-message {
+            background-color: #dff0d8;
+            color: #3c763d;
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid #4cae4c;
+            border-radius: 4px;
+        }
+
+        .booking-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .booking-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .booking-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .booking-actions a {
+            text-decoration: none;
+            color: #007bff;
+            font-size: 14px;
+        }
+
+        .booking-actions a:hover {
+            text-decoration: underline;
+        }
+
+        .no-bookings {
+            text-align: center;
+            color: #999;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 30px;
+            font-size: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>My Bookings</h2>
+
+<div class="container">
+
+    <!-- Flash success message -->
+    <div th:if="${successMessage}" class="success-message" th:text="${successMessage}"></div>
+
+    <!-- Booking list -->
+    <div th:if="${bookings}">
+        <div th:each="booking : ${bookings}" class="booking-row">
+            <div class="booking-info">
+                <div><strong>Bus:</strong> <span th:text="${booking.bus.name}"></span></div>
+                <div><strong>Date:</strong> <span th:text="${#temporals.format(booking.journeyDate, 'yyyy-MM-dd')}"></span></div>
+                <div><strong>Seat:</strong> <span th:text="${booking.seatNumber}"></span></div>
+            </div>
+            <div class="booking-actions">
+                <a th:href="@{/bookings/{id}(id=${booking.id})}">Details</a>
+                <a th:href="@{/bookings/edit/{id}(id=${booking.id})}">Edit</a>
+                <a th:href="@{/bookings/delete/{id}(id=${booking.id})}"
+                   onclick="return confirm('Are you sure you want to cancel this booking?')">Cancel</a>
+                <a th:href="@{/booking/eticket/{bookingId}(bookingId=${booking.id})}" target="_blank">E-Ticket</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- No bookings message -->
+    <div th:if="${#lists.isEmpty(bookings)}" class="no-bookings">
+        You have no bookings yet.
+    </div>
+
+    <!-- Back to homepage -->
+    <a class="back-link" href="/home">← Back to Home</a>
+
+</div>
+
+</body>
+</html>

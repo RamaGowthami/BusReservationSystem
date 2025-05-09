@@ -3,6 +3,8 @@ package com.example.reservation.service;
 import com.example.reservation.exception.BusNotFoundException;
 import com.example.reservation.exception.InvalidSearchCriteriaException;
 import com.example.reservation.exception.RouteNotFoundException; // Import the new exception
+import com.example.reservation.exception.InvalidSearchCriteriaException;
+import com.example.reservation.exception.RouteNotFoundException;
 import com.example.reservation.model.Bus;
 import com.example.reservation.repository.BusRepository;
 import org.springframework.beans.factory.annotation.Autowired;

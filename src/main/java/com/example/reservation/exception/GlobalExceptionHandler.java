@@ -1,4 +1,4 @@
-package com.example.reservation.exception;
+/*package com.example.reservation.exception;
 
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -39,3 +39,5 @@ public class GlobalExceptionHandler {
     }
 
 }
+*/
+

@@ -93,9 +93,11 @@
     <div th:if="${bookings}">
         <div th:each="booking : ${bookings}" class="booking-row">
             <div class="booking-info">
-                <div><strong>Bus:</strong> <span th:text="${booking.bus.name}"></span></div>
-                <div><strong>Date:</strong> <span th:text="${#temporals.format(booking.journeyDate, 'yyyy-MM-dd')}"></span></div>
-                <div><strong>Seat:</strong> <span th:text="${booking.seatNumber}"></span></div>
+                <div>
+                    <strong>Bus:</strong> <span th:text="${booking.bus.name}"></span>
+                  <strong>Date:</strong> <span th:text="${#temporals.format(booking.journeyDate, 'yyyy-MM-dd')}"></span>
+                    <strong>Seat:</strong> <span th:text="${booking.seatNumber}"></span>
+                </div>
             </div>
             <div class="booking-actions">
                 <a th:href="@{/bookings/{id}(id=${booking.id})}">Details</a>

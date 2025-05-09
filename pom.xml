@@ -56,6 +56,11 @@
 			<version>2.5.0</version> <!-- Use latest compatible version -->
 		</dependency>
 
+		<!--<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-ui</artifactId>
+			<version>1.6.0</version>
+		</dependency>-->
 
 
 

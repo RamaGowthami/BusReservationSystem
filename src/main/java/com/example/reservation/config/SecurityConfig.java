@@ -41,6 +41,7 @@ public class SecurityConfig {
         http.csrf().disable()
                 .authorizeHttpRequests((authz) -> authz
                         .requestMatchers("/register","/login", "/css/**", "/swagger-ui.html","/swagger-ui/**", "/v3/api-docs/**","/v3/api-docs.yaml").permitAll()
+                        .requestMatchers("/api/**").permitAll()
                         //.requestMatchers("/appointments/bookForm").authenticated()
                         .requestMatchers("/booking/options").authenticated()
                         .requestMatchers("/bus/register-passengers/**").authenticated() // Add this line

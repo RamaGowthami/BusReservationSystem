@@ -8,7 +8,7 @@ public class ReservationApplication {
 
 
 	public static void main(String[] args) {
-		System.setProperty("tomcat.useApr", "false");
+		//System.setProperty("tomcat.useApr", "false");
 		SpringApplication.run(ReservationApplication.class, args);
 	}
 
